@@ -17,13 +17,14 @@ function loadExifData(image) {
     EXIF.getData(image, function() {
         const metadata = document.getElementById('metadata');
         const exifData = EXIF.getAllTags(this);
+        console.log('Default Image EXIF Data:', exifData); // 用於調試
         
         let metadataHTML = '';
         metadataHTML += `
             <div>
                 <span>${exifData.Model || '未知'}</span>,
                 <span>1/${1/exifData.ExposureTime || '未知'}</span>,
-                <span>${exifData.ISOSpeedRatings || '未知'}</span>,
+                <span>ISO ${exifData.ISOSpeedRatings || '未知'}</span>,
                 <span>${exifData.FocalLength || '未知'}mm</span>
             </div>
         `;
@@ -40,13 +41,54 @@ document.getElementById('imageInput').addEventListener('change', function(e) {
     // 顯示圖片預覽
     const preview = document.getElementById('preview');
     const reader = new FileReader();
+    
+    // 先讀取圖片
     reader.onload = function(e) {
         preview.src = e.target.result;
-        // 在圖片加載完成後讀取 EXIF 數據
+        
+        // 圖片加載完成後再讀取 EXIF
         preview.onload = function() {
-            loadExifData(preview);
-        }
-    }
+            // 重新從文件讀取 EXIF 數據
+            EXIF.getData(file, function() {
+                const metadata = document.getElementById('metadata');
+                const exifData = EXIF.getAllTags(this);
+                console.log('EXIF Data:', exifData); // 用於調試
+                
+                // 處理快門速度的特殊格式
+                let shutterSpeed = '';
+                if (exifData.ExposureTime) {
+                    if (exifData.ExposureTime < 1) {
+                        shutterSpeed = `1/${Math.round(1/exifData.ExposureTime)}`;
+                    } else {
+                        shutterSpeed = `${exifData.ExposureTime}`;
+                    }
+                }
+
+                // 處理焦距，確保顯示整數
+                let focalLength = '';
+                if (exifData.FocalLength) {
+                    focalLength = Math.round(exifData.FocalLength);
+                }
+                
+                let metadataHTML = '';
+                metadataHTML += `
+                    <div>
+                        <span>${exifData.Model || '未知'}</span>,
+                        <span>${shutterSpeed || '未知'}</span>,
+                        <span>ISO ${exifData.ISOSpeedRatings || '未知'}</span>,
+                        <span>${focalLength}mm</span>
+                    </div>
+                `;
+                
+                metadata.innerHTML = metadataHTML;
+                
+                // 同時更新下載框架的數據
+                const downloadMetadata = document.getElementById('downloadMetadata');
+                downloadMetadata.innerHTML = metadataHTML;
+            });
+        };
+    };
+    
     reader.readAsDataURL(file);
 });
 
