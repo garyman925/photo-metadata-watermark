@@ -32,36 +32,23 @@ function loadExifData(image) {
     });
 }
 
-// 原有的文件上傳處理
-// document.getElementById('imageInput').addEventListener('change', function(e) {
-//     const file = e.target.files[0];
-//     if (!file) return;
+// 文件上傳處理
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-//     // 顯示圖片預覽
-//     const preview = document.getElementById('preview');
-//     const reader = new FileReader();
-//     reader.onload = function(e) {
-//         preview.src = e.target.result;
-//     }
-//     reader.readAsDataURL(file);
-
-//     // 讀取EXIF數據
-//     EXIF.getData(file, function() {
-//         const metadata = document.getElementById('metadata');
-//         const exifData = EXIF.getAllTags(this);
-        
-//         let metadataHTML = '';
-//         metadataHTML += `
-//             <p>相機型號：${exifData.Model || '未知'}</p>
-//             <p>光圈值：f/${exifData.FNumber || '未知'}</p>
-//             <p>快門速度：1/${1/exifData.ExposureTime || '未知'}</p>
-//             <p>ISO：${exifData.ISOSpeedRatings || '未知'}</p>
-//             <p>焦距：${exifData.FocalLength || '未知'}mm</p>
-//         `;
-        
-//         metadata.innerHTML = metadataHTML;
-//     });
-// });
+    // 顯示圖片預覽
+    const preview = document.getElementById('preview');
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        preview.src = e.target.result;
+        // 在圖片加載完成後讀取 EXIF 數據
+        preview.onload = function() {
+            loadExifData(preview);
+        }
+    }
+    reader.readAsDataURL(file);
+});
 
 // 修改下載功能
 document.getElementById('downloadBtn').addEventListener('click', function() {
