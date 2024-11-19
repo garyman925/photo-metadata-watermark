@@ -7,9 +7,11 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* 修改預覽框架的樣式，使其響應式 */
         .image-frame {
-            width: 1080px;
-            height: 1350px;
+            width: 100%;
+            max-width: 1080px;
+            aspect-ratio: 4/5; /* 1080:1350 簡化後的比例 */
             background-color: #f7f7f7;
             display: flex;
             flex-direction: column;
@@ -20,43 +22,36 @@
             box-sizing: border-box;
         }
 
-        .image-preview {
-            height: 100%;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        .frame-content{
-            height: 1100px;
+        .frame-content {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 0; /* 防止溢出 */
         }
 
-        #metadata p {
-            margin: 0;
-            line-height: 1.5;
-            padding: 2px 0;
+        .image-preview {
+            max-height: 100%;
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
         }
-        
 
-        .metadata-group{
+        .metadata-group {
             display: flex;
-            margin: 0px 145px;
-            font-size: 1rem;
+            margin: 0px 10%;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
             align-items: center;
             padding: 15px 0px;
         }
 
         .metadata-group img {
-           height: 35px;
-           margin: 0;
+            height: clamp(25px, 4vw, 35px);
+            margin: 0;
         }
 
-        /* 添加下載框架的樣式 */
+        /* 下載框架保持固定尺寸 */
         .download-frame {
             width: 1080px;
             height: 1350px;
@@ -69,40 +64,23 @@
             box-sizing: border-box;
         }
 
-        /* 確保下載框架中的內容與顯示框架完全一致 */
         .download-frame .frame-content {
             height: 1100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .download-frame .metadata-group {
-            display: flex;
             margin: 0px 145px;
             font-size: 1rem;
-            align-items: center;
-            padding: 15px 0px;
-        }
-
-        .download-frame .image-preview {
-            height: 100%;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
         }
 
         .download-frame .metadata-group img {
             height: 35px;
-            margin: 0;
         }
 
-        .download-frame #downloadMetadata p {
-            margin: 0;
-            line-height: 1.5;
-            padding: 2px 0;
+        @media (max-width: 768px) {
+            .metadata-group {
+                margin: 0px 5%;
+            }
         }
     </style>
 </head>
